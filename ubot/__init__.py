@@ -9,22 +9,25 @@ from pyrogram import *
 from pyrogram.handlers import *
 from pyrogram.types import *
 
-
 from aiohttp import ClientSession
 from .config import *
 from pyromod import listen
 
-aiosession = ClientSession()
+# Menambahkan pengelolaan ClientSession di dalam event loop
+async def create_session():
+    global aiosession
+    aiosession = await ClientSession().__aenter__()
 
+# Event loop
 loop = asyncio.get_event_loop_policy()
 event_loop = loop.get_event_loop()
 
+# Connection Handler untuk error logging
 class ConnectionHandler(logging.Handler):
     def emit(self, record):
         for X in ["OSError", "socket"]:
             if X in record.getMessage():
                 os.system(f"kill -9 {os.getpid()} && python3 -m ubot")
-
 
 logger = logging.getLogger()
 logger.setLevel(logging.ERROR)
@@ -38,26 +41,24 @@ connection_handler = ConnectionHandler()
 logger.addHandler(stream_handler)
 logger.addHandler(connection_handler)
 
-
+# Userbot Class
 class Ubot(Client):
     _ubot = []
     _prefix = {}
     _get_my_id = []
     _translate = {}
     _get_my_peer = {}
-    
+
     def __init__(self, **kwargs):
-        super().__init__(**kwargs,
-          device_model="alcan-Ubot")
-        
+        super().__init__(**kwargs, device_model="alcan-Ubot")
+
     def on_message(self, filters=None, group=-1):
         def decorator(func):
             for ub in self._ubot:
                 ub.add_handler(MessageHandler(func, filters), group)
             return func
-
         return decorator
-        
+
     def set_prefix(self, user_id, prefix):
         self._prefix[self.me.id] = prefix
 
@@ -76,17 +77,16 @@ class Ubot(Client):
     async def stop(self):
         await super().stop()
 
-            
-
 ubot = Ubot(name="ubot")
 
+# Fungsi get_prefix untuk mengambil prefix
 async def get_prefix(user_id):
     return ubot._prefix.get(user_id, ".")
 
-
+# Anjay Command Handling
 def anjay(cmd):
     command_re = re.compile(r"([\"'])(.*?)(?<!\\)\1|(\S+)")
- 
+
     async def func(_, client, message):
         if message.text and message.from_user:
             text = message.text.strip()
@@ -128,7 +128,7 @@ def anjay(cmd):
 
     return filters.create(func)
 
-
+# Bot Class
 class Bot(Client):
     def __init__(self, **kwargs):
         super().__init__(**kwargs,
@@ -142,21 +142,29 @@ class Bot(Client):
         def decorator(func):
             self.add_handler(MessageHandler(func, filters), group)
             return func
-
         return decorator
 
     def on_callback_query(self, filters=None, group=-1):
         def decorator(func):
             self.add_handler(CallbackQueryHandler(func, filters), group)
             return func
-
         return decorator
 
     async def start(self):
         await super().start()
 
-
+# Bot instance
 bot = Bot()
 
+# Helper and DB imports
 from ubot.core.helpers import *
 from ubot.utils.dbfunctions import *
+
+# Event loop untuk menjalankan session
+async def run():
+    await create_session()  # Menjalankan sesi di event loop
+    await ubot.start()  # Mulai userbot
+    await bot.start()  # Mulai bot
+
+if __name__ == "__main__":
+    asyncio.run(run())  # Memulai event loop
