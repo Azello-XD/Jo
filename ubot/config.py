@@ -22,7 +22,7 @@ USER_ID = list(map(int, os.getenv("USER_ID", "1927018403").split()))
 
 OPENAI_KEY = os.getenv(
     "OPENAI_KEY",
-    "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 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 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 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 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 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",
+    " ",
 ).split()
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "7363561894:AAEAlRcisKQC_MaoACtlcA9vKJs8ZUVCc6U")
@@ -35,5 +35,5 @@ SKY = int(os.environ.get("SKY", "-1002584508663"))
 
 MONGO_URL = os.environ.get(
     "MONGO_URL",
-    "mongodb+srv://wtfbruh:KontolXD#123@fsub.brzgete.mongodb.net/?retryWrites=true&w=majority&appName=fsub",
+    "",
 )
