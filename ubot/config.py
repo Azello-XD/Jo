@@ -22,7 +22,7 @@ USER_ID = list(map(int, os.getenv("USER_ID", "1927018403").split()))
 
 OPENAI_KEY = os.getenv(
     "OPENAI_KEY",
-    " ",
+    "",
 ).split()
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "7363561894:AAEAlRcisKQC_MaoACtlcA9vKJs8ZUVCc6U")
@@ -35,5 +35,5 @@ SKY = int(os.environ.get("SKY", "-1002584508663"))
 
 MONGO_URL = os.environ.get(
     "MONGO_URL",
-    "",
+    "mongodb+srv://wtfbruh:KontolXD#123@fsub.brzgete.mongodb.net/?retryWrites=true&w=majority&appName=fsub",
 )
